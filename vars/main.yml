@@ -73,4 +73,3 @@ core_dependencies_packages: "{{ _core_dependencies_packages[ansible_distribution
 core_dependencies_pip_packages:
   - boto
   - boto3
-  - boto

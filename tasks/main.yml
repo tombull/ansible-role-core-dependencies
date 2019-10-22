@@ -2,27 +2,32 @@
 # tasks file for core_dependencies
 - name: Install packages
   package:
-    name: "{{ item }}"
+    name: '{{ item }}'
     state: present
   with_items:
-    - "{{ core_dependencies_shared_packages }}"
-    - "{{ core_dependencies_packages }}"
+    - '{{ core_dependencies_shared_packages }}'
+    - '{{ core_dependencies_packages }}'
   register: core_dependencies_install_packages
   until: core_dependencies_install_packages is succeeded
   retries: 3
+  become: yes
+  when:
+    - ansible_pkg_mgr != 'unknown'
+    - ansible_pkg_mgr != 'atomic_container'
 
 - name: Try to install pip packages
   block:
-    - name: install pip packages (allowed to fail)
+    - name: Install pip packages (allowed to fail)
       pip:
-        name: "{{ core_dependencies_pip_packages }}"
+        name: '{{ core_dependencies_pip_packages }}'
         state: present
       register: core_dependencies_install_pip_packages
       until: core_dependencies_install_pip_packages is succeeded
       retries: 3
+      become: yes
   rescue:
     - name: Gracefully finish
       debug:
         msg:
           - "Your system can't install pip packages."
-          - "Skipping the pip dependencies."
+          - 'Skipping the pip dependencies.'
