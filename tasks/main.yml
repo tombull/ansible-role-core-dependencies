@@ -26,8 +26,19 @@
       retries: 3
       become: yes
   rescue:
-    - name: Gracefully finish
-      debug:
-        msg:
-          - "Your system can't install pip packages."
-          - 'Skipping the pip dependencies.'
+    block:
+      - name: Install pip packages on systems without pip explicitly installed (allowed to fail)
+        pip:
+          name: '{{ core_dependencies_pip_packages }}'
+          state: present
+          executable: '{{ ansible_python_interpreter }} -m pip'
+        register: core_dependencies_install_pip_packages
+        until: core_dependencies_install_pip_packages is succeeded
+        retries: 3
+        become: yes
+    rescue:
+      - name: Gracefully finish
+        debug:
+          msg:
+            - "Your system can't install pip packages."
+            - 'Skipping the pip dependencies.'

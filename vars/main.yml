@@ -24,6 +24,7 @@ _core_dependencies_packages:
     - debconf-utils
     - passwd
     - python3-apt
+    - python3-pip
     - subversion
     - xz-utils
   CentOS-7:
